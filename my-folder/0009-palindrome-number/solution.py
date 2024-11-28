@@ -4,7 +4,12 @@ class Solution(object):
         :type x: int
         :rtype: bool
         """
-        if str(x)== str(x)[::-1]:
-            return True
-        return False
-
+        if x<0:
+            return False
+        else:
+            strNum = str(x)
+            revStr = strNum[::-1]
+            if strNum == revStr:
+                return True
+            else:
+                return False
