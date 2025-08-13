@@ -1,11 +1,8 @@
 class Solution {
 public:
     bool isPowerOfThree(int n) {
-        if (n <= 0) return false;
-        while (n % 3 == 0)
-        {
-            n /= 3;
-        }
-        return n == 1; 
+        int e = log(pow(2, 31) - 1) / log(3);
+        int N = pow(3, e);
+        return n > 0 && (N % n == 0);
     }
 };
