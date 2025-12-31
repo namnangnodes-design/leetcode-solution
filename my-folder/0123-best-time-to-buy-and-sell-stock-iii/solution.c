@@ -1,42 +1,24 @@
+int max(int a, int b)
+{
+    return a > b ? a : b;
+}
+
+int min(int a, int b)
+{
+    return a < b ? a : b;
+}
+
 int maxProfit(int* prices, int pricesSize) {
-    int res = 0;
-    int min = prices[0];
-    int profit = 0;
-    int* left = (int*) malloc(pricesSize * sizeof(int));
-    int* right = (int*) malloc(pricesSize * sizeof(int));
+    int buy1 = INT_MIN;
+    int sell1 = INT_MIN;
+    int buy2 = INT_MIN;
+    int sell2 = INT_MIN;
     for (int i = 0; i < pricesSize; i++)
     {
-        if (prices[i] < min)
-        {
-            min = prices[i];
-        }
-        else if (prices[i] - min > profit)
-        {
-            profit = prices[i] - min;
-        }
-        left[i] = profit;
+        buy1 = max(-prices[i], buy1);
+        sell1 = max(sell1, prices[i] + buy1);
+        buy2 = max(sell1 - prices[i], buy2);
+        sell2 = max(sell2, prices[i] + buy2);
     }
-    int max = 0;
-    profit = 0;
-    for (int i = pricesSize - 1; i > -1; i--)
-    {
-        if (max < prices[i])
-        {
-            max = prices[i];
-        } 
-        else if (profit < max - prices[i])
-        {
-            profit = max - prices[i];
-        }
-        right[i] = profit;
-    }
-    res = right[0] > left[pricesSize - 1] ? right[0] : left[pricesSize - 1];    
-    for (int i = 0; i < pricesSize - 1; i++)
-    {
-        if (left[i] + right[i + 1] > res)
-        {
-            res = left[i] + right[i + 1];
-        }
-    }
-    return res;
+    return sell2;
 }
