@@ -1,6 +1,3 @@
-#include <limits.h>
-#include <stdbool.h>
-
 struct Tran {
     int start;
     int end;
