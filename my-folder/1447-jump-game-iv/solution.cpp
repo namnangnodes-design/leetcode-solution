@@ -1,50 +1,49 @@
 class Solution {
 public:
     int minJumps(vector<int>& arr) {
+        int n = arr.size();
         unordered_map<int, vector<int>> mMap;
         for (int i = 0; i < arr.size(); i++)
         {
-            if (mMap.find(arr[i]) != mMap.end())
-            {
-                mMap[arr[i]].push_back(i);
-            }
-            else
-            {
-                vector<int> temp;
-                temp.push_back(i);
-                mMap[arr[i]] = temp;
-            }
+            mMap[arr[i]].push_back(i);
         }
-        queue<pair<int, int>> road;
+        int step = 0;
+        queue<int> road;
         vector<bool> visited(arr.size(), false);
-        road.push({0, 0});
+        road.push(0);
         visited[0] = true;
         while (!road.empty())
         {
-            pair<int, int> cur = road.front();
-            if (cur.first == arr.size() - 1) return cur.second;
-            road.pop();
-            if (cur.first - 1 >= 0 && !visited[cur.first - 1])
+            int size = road.size();
+            while (size--)
             {
-                road.push({cur.first - 1, cur.second + 1});
-                visited[cur.first - 1] = true;
-            }
-            if (cur.first + 1 < arr.size() && !visited[cur.first + 1])
-            {
-                road.push({cur.first + 1, cur.second + 1});
-                visited[cur.first + 1] = true;
-            }
-            
-            for (int j: mMap[arr[cur.first]])
-            {   
-                if (!visited[j])
+                int cur = road.front();
+                if (cur == n - 1) {
+                    return step;
+                }
+                road.pop();
+                if (cur - 1 > -1 && !visited[cur - 1])
                 {
-                    road.push({j, cur.second + 1});
-                    visited[j] = true;
+                    road.push(cur - 1);
+                    visited[cur - 1] = true;
+                }
+                if (cur + 1 < n && !visited[cur + 1])
+                {
+                    road.push(cur + 1);
+                    visited[cur + 1] = true;
+                }
+                if (mMap.count(arr[cur])) {
+                    for (int idx : mMap[arr[cur]]) {
+                        if (!visited[idx]) {
+                            visited[idx] = true;
+                            road.push(idx);
+                        }
+                    }
+                    mMap.erase(arr[cur]);
                 }
             }
-            mMap.erase(arr[cur.first]);
+            step++;
         }
-        return -1;
+        return step;
     }
 };
