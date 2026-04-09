@@ -1,48 +1,36 @@
 class Solution {
 public:
-    int shipWithinDays(vector<int>& weights, int days) {
-        int n = weights.size();
-        int sumW = 0;
-        int maxW = 1;
-        for (int i = 0; i < n; i++)
-        {
-            maxW = max(weights[i], maxW);
-            sumW += weights[i];
-        }
-        int res = sumW;
-        int l = maxW;
-        int r = sumW;
-        while (l <= r)
-        {
-            int m = l + (r - l) / 2;
-            int cur = 0;
-            int day = 0;
-            for (int i = 0; i < n; i++)
-            {
-                if (day == days)
-                {
-                    break;
-                }
-                if (cur + weights[i] > m)
-                {
-                    day++;
-                    cur = weights[i];
-                }
-                else
-                {
-                    cur += weights[i];
-                }
-            }
-            if (day < days)
-            {
-                res = min(res, m);
-                r = m - 1;
-            }
-            else
-            {
-                l = m + 1;
+    int shipWithinDays(std::vector<int>& weights, int days) {
+        int left = *std::max_element(weights.begin(), weights.end());
+        int right = std::accumulate(weights.begin(), weights.end(), 0);
+
+        while (left < right) {
+            int mid = left + (right - left) / 2;
+            if (canShip(weights, days, mid)) {
+                right = mid;
+            } else {
+                left = mid + 1;
             }
         }
-        return res;
+
+        return left;
+    }
+
+private:
+    bool canShip(const std::vector<int>& weights, int days, int capacity) {
+        int currentLoad = 0;
+        int requiredDays = 1;
+
+        for (int weight : weights) {
+            if (currentLoad + weight <= capacity) {
+                currentLoad += weight;
+            } else {
+                requiredDays++;
+                currentLoad = weight;
+            }
+        }
+
+        return requiredDays <= days;
     }
 };
+
