@@ -1,35 +1,46 @@
 class Solution {
 public:
-    void mergeSort(vector<int>& nums, int left, int right, vector<int>& temp) {
-        if (left >= right) return;
-
-        int mid = left + (right - left) / 2;
-        mergeSort(nums, left, mid, temp);
-        mergeSort(nums, mid + 1, right, temp);
-        merge(nums, left, mid, right, temp);
-    }
-
-    void merge(vector<int>& nums, int left, int mid, int right, vector<int>& temp) {
-        int l = left, r = mid + 1, k = left;
-
-        while (l <= mid && r <= right) {
-            if (nums[l] <= nums[r]) {
-                temp[k++] = nums[l++];
-            } else {
-                temp[k++] = nums[r++];
-            }
-        }
-        while (l <= mid) temp[k++] = nums[l++];
-        while (r <= right) temp[k++] = nums[r++];
-
-        // Copy sorted elements back to original array
-        std::copy(temp.begin() + left, temp.begin() + right + 1, nums.begin() + left);
-    }
-
     vector<int> sortArray(vector<int>& nums) {
-        vector<int> temp(nums.size());  // Preallocate temp buffer
-        mergeSort(nums, 0, nums.size() - 1, temp);
+        int n = nums.size();
+        if (n <= 1) return nums;
+
+        int minNum = nums[0], maxNum = nums[0];
+        for (int x : nums) {
+            minNum = min(minNum, x);
+            maxNum = max(maxNum, x);
+        }
+
+        int offset = minNum; 
+        for (int i = 0; i < n; i++) {
+            nums[i] -= offset; 
+        }
+        maxNum -= offset;
+
+        vector<int> res(n);
+        for (long long exp = 1; maxNum / exp > 0; exp *= 10) {
+            vector<int> count(10, 0);
+            
+            for (int j = 0; j < n; j++) {
+                count[(nums[j] / exp) % 10]++;
+            }
+            
+            for (int j = 1; j < 10; j++) {
+                count[j] += count[j - 1];
+            }
+            
+            for (int j = n - 1; j >= 0; j--) {
+                int digit = (nums[j] / exp) % 10;
+                res[count[digit] - 1] = nums[j];
+                count[digit]--;
+            }
+            
+            nums = res; 
+        }
+
+        for (int i = 0; i < n; i++) {
+            nums[i] += offset;
+        }
+
         return nums;
     }
 };
-
