@@ -1,16 +1,16 @@
 class Solution {
 public:
-    int mCount;
-    int mRes;
+    int mN;
     vector<int> mUnion;
 
     int find(int i)
     {
         if (mUnion[i] == i)
         {
-            return i;
+            return mUnion[i];
         }
-        return mUnion[i] = find(mUnion[i]);
+        mUnion[i] = find(mUnion[i]);
+        return mUnion[i];
     }
 
     bool unite(int a, int b)
@@ -21,42 +21,44 @@ public:
         {
             return false;
         }
+
         mUnion[findA] = findB;
+        mN--;
         return true;
     }
 
     int minCostConnectPoints(vector<vector<int>>& points) {
-        vector<vector<int>> edges;
-        mCount = 0;
-        mRes = 0;
-        int n = points.size();
-        for (int i = 0; i < n; i++)
+        priority_queue<vector<int>, vector<vector<int>>, greater<vector<int>>> adj;
+        mN = points.size();
+        mUnion = vector<int>(mN, -1);
+        for (int i = 0; i < mN; i++)
         {
-            mUnion.push_back(i);
+            mUnion[i] = i;
         }
-        for (int i = 0; i < n; i++)
+        for (int i = 0; i < mN; i++)
         {
-            for (int j = i + 1; j < n; j++)
+            for (int j = i + 1; j < mN; j++)
             {
-                edges.push_back({abs(points[i][0] - points[j][0]) + abs(points[i][1] - points[j][1]), i, j});
+                int u = i;
+                int v = j;
+                int d = abs(points[i][0] - points[j][0]) + abs(points[i][1] - points[j][1]);
+                adj.push({d, u, v});
             }
         }
-        sort(edges.begin(), edges.end());
-        for (auto &e: edges)
+        int res = 0;
+        while (mN > 1 && !adj.empty())
         {
-            int u = e[1];
-            int v = e[2];
-            int d = e[0];
+            auto a = adj.top();
+            adj.pop();
+            int u = a[1];
+            int v = a[2];
+            int d = a[0];
             if (unite(u, v))
             {
-                mCount++;
-                mRes += d;
+                res += d;
             }
-            if (mCount == n - 1)
-            {
-                return mRes;
-            }
+
         }
-        return mRes;
+        return res;
     }
 };
