@@ -1,8 +1,8 @@
 class Solution {
 public:
     vector<int> st;
-
-    void change(int i, int l, int r, int pos)
+    int MOD = 1000000007;
+    void update(int i, int l, int r, int p)
     {
         if (l == r)
         {
@@ -11,13 +11,14 @@ public:
         }
 
         int m = l + (r - l) / 2;
-        if (pos <= m)
+
+        if (p <= m)
         {
-            change(i * 2 + 1, l, m, pos);
+            update(i * 2 + 1, l, m, p);
         }
         else
         {
-            change(i * 2 + 2, m + 1, r, pos);
+            update(i * 2 + 2, m + 1, r, p);
         }
 
         st[i] = st[i * 2 + 1] + st[i * 2 + 2];
@@ -36,20 +37,19 @@ public:
         }
 
         int m = l + (r - l) / 2;
-        int lSum = query(i * 2 + 1, l, m, u, v);
-        int rSum = query(i * 2 + 2, m + 1, r, u, v);
-        return lSum + rSum;
+        int left = query(i * 2 + 1, l, m, u, v);
+        int right = query(i * 2 + 2, m + 1, r, u, v);
+        return left + right;
     }
 
     int createSortedArray(vector<int>& instructions) {
         st = vector<int>(400005, 0);
-        long long res = 0;
+        int res = 0;
         for (int i = 0; i < instructions.size(); i++)
         {
-            res = (res + min(query(0, 0, 1e5, 0, instructions[i] - 1), query(0, 0, 1e5, instructions[i] + 1, 1e5))) % (1000000007);
-            change(0, 0, 1e5, instructions[i]);
+            res = (res + min(query(0, 0, 1e5, 0, instructions[i] - 1), query(0, 0, 1e5, instructions[i] + 1, 1e5))) % MOD;
+            update(0, 0, 1e5, instructions[i]);
         }
-
         return res;
     }
 };
