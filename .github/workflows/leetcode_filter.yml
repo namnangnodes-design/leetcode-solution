@@ -1,18 +1,18 @@
 name: Generate Need To Do List
 
 on:
-  workflow_dispatch: # Cho phép bấm chạy thủ công
+  workflow_dispatch:
   schedule:
-    - cron: "0 9 * * 6" # Chạy tự động sau khi Sync LeetCode xong (9:00 Thứ 7)
+    - cron: "0 9 * * 6"
   push:
     paths:
-      - 'my-folder/**' # Tự động chạy mỗi khi có bài mới được push vào folder leetcode
+      - 'my-folder/**'
 
 jobs:
   check-cpp:
     runs-on: ubuntu-latest
     permissions:
-      contents: write # Cấp quyền ghi để commit file NeedToDo.txt
+      contents: write
 
     steps:
       - name: Checkout Repository
@@ -30,11 +30,14 @@ jobs:
           count=0
 
           if [ -d "$TARGET_DIR" ]; then
-            # Duyệt qua tất cả các thư mục con trong my-folder
-            for dir in "$TARGET_DIR"/*/; do
+            # Duyệt qua từng thư mục bài tập
+            for dir in "$TARGET_DIR"/*; do
               if [ -d "$dir" ]; then
-                # Kiểm tra xem có file .cpp hoặc .cc nào trong thư mục không
-                if ! ls "$dir"*.cpp "$dir"*.cc >/dev/null 2>&1; then
+                # Dùng find để tìm chính xác xem trong thư mục đó có file C++ nào không (.cpp, .cc, .cxx)
+                cpp_files=$(find "$dir" -type f \( -name "*.cpp" -o -name "*.cc" -o -name "*.cxx" \))
+                
+                # Nếu chuỗi rỗng nghĩa là CHƯA CÓ file C++
+                if [ -z "$cpp_files" ]; then
                   folder_name=$(basename "$dir")
                   echo "- $folder_name" >> "$OUTPUT_FILE"
                   count=$((count + 1))
@@ -44,7 +47,8 @@ jobs:
           fi
 
           echo "" >> "$OUTPUT_FILE"
-          echo "Tổng số bài chưa làm C++: $count" >> "$OUTPUT_FILE"
+          echo "-------------------------------------" >> "$OUTPUT_FILE"
+          echo "Tổng số bài chưa có C++: $count" >> "$OUTPUT_FILE"
 
       - name: Commit and Push NeedToDo.txt
         run: |
@@ -53,10 +57,9 @@ jobs:
           
           git add NeedToDo.txt
           
-          # Kiểm tra xem file NeedToDo.txt có thay đổi gì không trước khi commit
           if git diff --staged --quiet; then
-            echo "Không có thay đổi mới trong NeedToDo.txt"
+            echo "Không có thay đổi trong NeedToDo.txt"
           else
-            git commit -m "[Auto] Cập nhật danh sách bài chưa làm C++ vào NeedToDo.txt"
+            git commit -m "[Auto] Cập nhật danh sách bài chưa làm C++"
             git push
           fi
