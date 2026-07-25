@@ -1,0 +1,62 @@
+name: Generate Need To Do List
+
+on:
+  workflow_dispatch: # Cho phép bấm chạy thủ công
+  schedule:
+    - cron: "0 9 * * 6" # Chạy tự động sau khi Sync LeetCode xong (9:00 Thứ 7)
+  push:
+    paths:
+      - 'my-folder/**' # Tự động chạy mỗi khi có bài mới được push vào folder leetcode
+
+jobs:
+  check-cpp:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # Cấp quyền ghi để commit file NeedToDo.txt
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Find Problems Missing C++ Submissions
+        run: |
+          TARGET_DIR="my-folder"
+          OUTPUT_FILE="NeedToDo.txt"
+
+          echo "=== Danh sách bài chưa làm bằng C++ ===" > "$OUTPUT_FILE"
+          echo "Cập nhật lúc: $(date)" >> "$OUTPUT_FILE"
+          echo "-------------------------------------" >> "$OUTPUT_FILE"
+
+          count=0
+
+          if [ -d "$TARGET_DIR" ]; then
+            # Duyệt qua tất cả các thư mục con trong my-folder
+            for dir in "$TARGET_DIR"/*/; do
+              if [ -d "$dir" ]; then
+                # Kiểm tra xem có file .cpp hoặc .cc nào trong thư mục không
+                if ! ls "$dir"*.cpp "$dir"*.cc >/dev/null 2>&1; then
+                  folder_name=$(basename "$dir")
+                  echo "- $folder_name" >> "$OUTPUT_FILE"
+                  count=$((count + 1))
+                fi
+              fi
+            done
+          fi
+
+          echo "" >> "$OUTPUT_FILE"
+          echo "Tổng số bài chưa làm C++: $count" >> "$OUTPUT_FILE"
+
+      - name: Commit and Push NeedToDo.txt
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          
+          git add NeedToDo.txt
+          
+          # Kiểm tra xem file NeedToDo.txt có thay đổi gì không trước khi commit
+          if git diff --staged --quiet; then
+            echo "Không có thay đổi mới trong NeedToDo.txt"
+          else
+            git commit -m "[Auto] Cập nhật danh sách bài chưa làm C++ vào NeedToDo.txt"
+            git push
+          fi
