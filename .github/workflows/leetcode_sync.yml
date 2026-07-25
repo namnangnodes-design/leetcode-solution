@@ -1,0 +1,17 @@
+name: Sync LeetCode
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 0 * * *' # Chạy tự động hàng ngày
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Sync LeetCode
+        uses: joshcai/leetcode-sync@v1.7.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          leetcode_session: ${{ secrets.LEETCODE_SESSION }}
+          leetcode_csrf_token: ${{ secrets.LEETCODE_CSRF_TOKEN }}
+          destination_folder: ''
