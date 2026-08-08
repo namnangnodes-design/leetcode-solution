@@ -1,8 +1,7 @@
 === Danh sách bài chưa làm bằng C++ ===
-Cập nhật lúc: Sat Aug  1 10:29:03 UTC 2026
+Cập nhật lúc: Sat Aug  8 09:30:41 UTC 2026
 -------------------------------------
 - 0011-container-with-most-water
-- 0013-roman-to-integer
 - 0014-longest-common-prefix
 - 0033-search-in-rotated-sorted-array
 - 0035-search-insert-position
@@ -53,6 +52,7 @@ Cập nhật lúc: Sat Aug  1 10:29:03 UTC 2026
 - 0804-rotated-digits
 - 0865-robot-room-cleaner
 - 1159-smallest-subsequence-of-distinct-characters
+- 1167-minimum-time-to-build-blocks
 - 1213-handshakes-that-dont-cross
 - 1222-remove-covered-intervals
 - 1234-number-of-paths-with-max-score
@@ -116,12 +116,14 @@ Cập nhật lúc: Sat Aug  1 10:29:03 UTC 2026
 - 3558-find-a-safe-walk-through-a-grid
 - 3583-sorted-gcd-pair-queries
 - 3611-construct-the-minimum-bitwise-array-ii
+- 3635-smallest-divisible-digit-product-ii
 - 3651-transformed-array
 - 3677-maximum-amount-of-money-robot-can-earn
 - 3704-count-partitions-with-even-sum-difference
 - 3770-lexicographically-smallest-generated-string
 - 3781-maximize-the-distance-between-points-on-a-square
 - 3804-maximize-active-section-with-trade-ii
+- 3813-smallest-palindromic-rearrangement-ii
 - 3842-number-of-ways-to-assign-edge-weights-ii
 - 3849-equal-sum-grid-partition-i
 - 3850-equal-sum-grid-partition-ii
@@ -146,4 +148,4 @@ Cập nhật lúc: Sat Aug  1 10:29:03 UTC 2026
 - 4136-concatenate-non-zero-digits-and-multiply-by-sum-ii
 
 -------------------------------------
-Tổng số bài chưa có C++: 143
+Tổng số bài chưa có C++: 145
